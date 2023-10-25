@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="html/mainfragment :: head"></head>
+    <script type="text/javascript" th:src="@{/js/autoui/deviceList.js}"></script>
+    <script type="text/javascript" th:src="@{/js/autoui/autoUi.js}"></script>
+    <script type="text/javascript" th:src="@{/js/html/fileinput.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fileinput.min.css}">
+
+</head>
+<body>
+<nav th:replace="html/mainfragment :: navbar"></nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <nav th:replace="html/mainfragment :: letf_nav"></nav>
+        </div>
+
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/api/home">home</a></li>
+                <li class="breadcrumb-item "><a>autoui</a></li>
+                <li class="breadcrumb-item active"><a>pad</a></li>
+            </ol>
+
+            <!-- 获取设备列表 -->
+
+            <a th:id="totalDevice" ></a>
+            <!-- Table -->
+            <table class="table table-hover table-bordered table-condensed ">
+                <thead class="thead-light">
+                <tr>
+                    <th>功能</th>
+                    <th>操作</th>
+                    <th>结果</th>
+                    <th>备注</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>获取设备列表</td>
+                    <td>
+                        <a th:id="getDeviceList" class="btn btn-sm btn-info" onclick="getDeviceList()">运行</a>
+                    </td>
+                    <td >
+                        <span id="deviceResult"></span>
+                    </td>
+                    <td >
+                        <span id="deviceDesc" ></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>安装APP</td>
+                    <td>
+                        <btn class="btn btn-sm btn-info" id="installTestAppDesc" onclick="openUploadPage()">
+                            上传安装APK
+                        </btn>
+                    <td></td>
+                    <td></td>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>ADB命令</td>
+                    <td>
+                        <a th:id="runAdb"
+                           class="btn btn-sm btn-info" onclick="runAdb()">运行</a>
+                    </td>
+                    <td>
+                        <span th:id="isRunAdb"></span>
+                    </td>
+                    <td>
+                        <input id="runAdbDesc" type="text" name="runAdbDesc"
+                               style="height:40px;width:400px"
+                               value="" placeholder="输入adb后面内容">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Monkey</td>
+                    <td>
+                        <a th:id="runMonkey"
+                           class="btn btn-sm btn-info" onclick="runMonkey()">运行</a>
+                    </td>
+                    <td>
+                        <span th:id="isMonkey"></span>
+                    </td>
+                    <td>
+                        <div class="row">
+                            &nbsp&nbsp
+                            <div>
+                                <a href="javascript:void(0)" class="btn btn-info btn-primary "
+                                   onclick="showAddPackageModal(this)">添加包名</a>
+
+                            </div>
+                            &nbsp&nbsp
+                            <div>
+                                运行时间(小时):&nbsp<input id="runMonkeyTime" type="text" name="runMonkeyTime"
+                                                     style="height:40px;width:100px"
+                                                     value="">
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>PUSH DEV账号</td>
+                    <td>
+                        <a th:id="pushDevAccount"
+                           class="btn btn-sm btn-info" onclick="pushDevAccount()">运行</a>
+                    </td>
+                    <td>
+                        <span th:id="isPushDevAccount"></span>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="btn btn-info btn-primary "
+                           onclick="showAddDevModal(this)">添加Dev学生账号</a>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>PUSH STRESS账号</td>
+                    <td>
+                        <a th:id="pushStressAccount"
+                           class="btn btn-sm btn-info" onclick="pushStressAccount()">运行</a>
+                    </td>
+                    <td>
+                        <span th:id="isPushStressAccount"></span>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="btn btn-info btn-primary "
+                           onclick="showAddStressModal(this)">添加Stress学生账号</a>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>PUSH ONLINE账号</td>
+                    <td>
+                        <a th:id="pushOnlineAccount"
+                           class="btn btn-sm btn-info" onclick="pushOnlineAccount()">运行</a>
+                    </td>
+                    <td>
+                        <span th:id="isPushOnlineAccount"></span>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="btn btn-info btn-primary "
+                           onclick="showAddOnlineModal(this)">添加Online学生账号</a>
+
+                    </td>
+                </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+<!--添加DEV学生账号模态框（Modal）-->
+<div class="modal fade" id="addDevModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="devModalLabel">
+                    添加dev学生账号
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+
+                    <tr class="th-inner">
+                        <td class="text-right">学生账号:</td>
+                        <td>
+                            <textarea id="addDevStudent" type="text" name="modelComments"
+                                      style="height:400px;width:300px"
+                                      placeholder=""></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>
+                <button type="button" id="addDevID" class="btn btn-sm btn-primary" onclick="addDevAccount()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<!--添加学生账号模态框（Modal）-->
+<div class="modal fade" id="addStressModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="stressModalLabel">
+                    添加Stress学生账号
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+
+                    <tr class="th-inner">
+                        <td class="text-right">学生账号:</td>
+                        <td>
+                            <textarea id="addStressStudent" type="text" name="modelComments"
+                                      style="height:400px;width:300px"
+                                      placeholder=""></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>
+                <button type="button" id="addStressID" class="btn btn-sm btn-primary" onclick="addStressAccount()">提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+<!--添加学生账号模态框（Modal）-->
+<div class="modal fade" id="addOnlineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="myModalLabel">
+                    添加Online学生账号
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+
+                    <tr class="th-inner">
+                        <td class="text-right">学生账号:</td>
+                        <td>
+                            <textarea id="addOnlineStudent" type="text" name="modelComments"
+                                      style="height:400px;width:300px"
+                                      placeholder=""></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>
+                <button type="button" id="addModelID" class="btn btn-sm btn-primary" onclick="addOnlineAccount()">提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<!--monkey添加包名模态框（Modal）-->
+<div class="modal fade" id="addPackage" tabindex="-1" role="dialog" aria-labelledby="addPackage"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="addPackageLabel">
+                    添加Monkey包名
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+
+                    <tr class="th-inner">
+                        <td class="text-right">包名列表:</td>
+                        <td>
+                            <textarea id="addMonkeyPackage" type="text" name="addMonkeyPackage"
+                                      style="height:400px;width:300px"
+                                      placeholder=""></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<!--上传APK（Modal）-->
+<div class="modal fade" id="updateAPK" tabindex="-1" role="dialog" aria-labelledby="updateAPK"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="updateAPKLabel">
+                    上传APK
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+
+                    <tr class="th-inner">
+
+                        <form id="form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input id="files" name="files" class="file-loading" type="file" multiple
+                                       data-show-caption="true"/>
+                            </div>
+                        </form>
+                    </tr>
+                    <tr class="th-inner">
+
+                        <td class="text-right">安装APK: &nbsp&nbsp</td>
+                        <td>
+                            <button type="button" id="installAPK" class="btn btn-sm btn-primary"
+                                    onclick="installTestApp()">安装
+                            </button>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                        </td>
+
+                        <td>
+                            <span style="font-size: 14px;line-height:0.5" th:class="text-success" th:id="installApkResult"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+</body>
+
+
+</html>

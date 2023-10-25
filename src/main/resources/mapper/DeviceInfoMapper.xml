@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okay.appplatform.mapper.ui.DeviceInfoMapper">
+
+
+    <!--<insertDevice >-->
+    <insert id="insertDevice" parameterType="com.okay.appplatform.domain.ui.DeviceInfo">
+      INSERT INTO ui_pad_device(id,serialno,ip,status,run_from)
+      values (#{id},#{serialno},#{ip},#{status},#{run_from})
+    </insert>
+
+
+    <!--<insertDevices >-->
+    <insert id="insertDevices" parameterType="java.util.List">
+        INSERT INTO ui_pad_device(serialno,ip,status,run_from) values
+        <foreach collection="list" item="ui_pad_device" index="index" separator=",">
+            (#{ui_pad_device.serialno},#{ui_pad_device.ip},#{ui_pad_device.status},
+            #{ui_pad_device.run_from} )
+        </foreach>
+    </insert>
+
+
+    <!--<updateDevice>-->
+    <update id="updateDevice" parameterType="com.okay.appplatform.domain.ui.DeviceInfo">
+        UPDATE ui_pad_device
+        SET serialno=#{serialno},ip=#{ip},status=#{status},run_from=#{run_from}
+        WHERE ID=#{id}
+    </update>
+
+    <!--<deleteDevice>-->
+    <delete id="deleteDevice" parameterType="int">
+        DELETE FROM ui_pad_device
+        WHERE ID=#{0}
+    </delete>
+
+    <!--<deleteAllDevice>-->
+    <delete id="deleteAllDevice" parameterType="int">
+        DELETE FROM ui_pad_device
+    </delete>
+
+
+    <!--<findById>-->
+    <select id="findById" parameterType="int" resultType="com.okay.appplatform.domain.ui.DeviceInfo">
+        SELECT *
+        FROM ui_pad_device
+        WHERE   ID=#{0}
+    </select>
+
+
+    <!--<findBySerialno>-->
+    <select id="findBySerialno" parameterType="String"
+            resultType="com.okay.appplatform.domain.ui.DeviceInfo">
+        SELECT *
+        FROM ui_pad_device
+        WHERE  serialno LIKE CONCAT('%',#{0},'%')
+    </select>
+
+    <!--<findByFromAndStatus>-->
+    <select id="findByFromAndStatus" parameterType="String"
+            resultType="com.okay.appplatform.domain.ui.DeviceInfo">
+        SELECT *
+        FROM ui_pad_device
+        WHERE  run_from LIKE run_from AND status LIKE status
+    </select>
+
+
+    <!--<findList>-->
+    <select id="findList" parameterType="com.okay.appplatform.domain.ui.DeviceInfo"
+            resultType="com.okay.appplatform.domain.ui.DeviceInfo">
+        SELECT *
+        FROM ui_pad_device
+    </select>
+
+</mapper>

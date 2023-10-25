@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okay.appplatform.mapper.ui.PadAccountMapper">
+
+    <!--<insertAccount >-->
+    <insert id="insertAccount" parameterType="com.okay.appplatform.domain.ui.PadAccount">
+      INSERT INTO pad_account(id,envName,account)
+      values (#{id},#{envName},#{account})
+    </insert>
+
+
+    <!--<insertAccounts >-->
+    <insert id="insertAccounts" parameterType="java.util.List">
+        INSERT INTO pad_account(envName,account) values
+        <foreach collection="list" item="pad_account" index="index" separator=",">
+            (#{pad_account.envName},#{pad_account.account} )
+        </foreach>
+    </insert>
+
+
+    <!--<updateAccount>-->
+    <update id="updateAccount" parameterType="com.okay.appplatform.domain.ui.PadAccount">
+        UPDATE pad_account
+        SET envName=#{envName},account=#{account}
+        WHERE ID=#{id}
+    </update>
+
+    <!--<updateAccounts >-->
+    <insert id="updateAccounts" parameterType="java.util.List">
+
+        <foreach collection="list" item="pad_account" index="index" separator=",">
+            UPDATE pad_account
+            SET envName=#{pad_account.envName}, account=#{pad_account.account}
+        </foreach>
+    </insert>
+
+
+    <!--<deleteAccount>-->
+    <delete id="deleteAccount" parameterType="int">
+        DELETE FROM pad_account
+        WHERE ID=#{0}
+    </delete>
+
+    <!--<deleteAllAccount>-->
+    <delete id="deleteAllAccount" parameterType="String">
+        DELETE FROM pad_account
+        WHERE envName=#{0}
+    </delete>
+
+    <!--<findAccountById>-->
+    <select id="findAccountById" parameterType="int" resultType="com.okay.appplatform.domain.ui.PadAccount">
+        SELECT *
+        FROM pad_account
+        WHERE   ID=#{0}
+    </select>
+
+
+    <!--<findAccountByEnvName>-->
+    <select id="findAccountByEnvName" parameterType="String"
+            resultType="com.okay.appplatform.domain.ui.PadAccount">
+        SELECT *
+        FROM pad_account
+        WHERE  envName LIKE CONCAT('%',#{0},'%')
+    </select>
+
+
+    <!--<findAccountList>-->
+    <select id="findAccountList" parameterType="com.okay.appplatform.domain.ui.PadAccount"
+            resultType="com.okay.appplatform.domain.ui.PadAccount">
+        SELECT *
+        FROM pad_account
+    </select>
+
+</mapper>
